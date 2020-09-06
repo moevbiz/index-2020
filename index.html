@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <script type="text/javascript" src="./assets/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./assets/js/main.js?v=0.1"></script>
+    <title>Independent Space Index 2020</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="seedInfo">
+        Seed: "<span id="seed-info"></span>"
+        (?)
+    </div>
+    <main>
+        <h1 class="largeText terrorize">
+            Independent
+            <br>
+            Space 
+            <br>
+            Index 
+            <br>
+            2020
+        </h1>
+        <h2 class="largeText">
+            Oct. 22—24
+        </h2>
+        <div class="popup">
+            <div class="popup__item">
+                <div>Program<br>now online!</div>
+            </div>
+        </div>
+        <article class="text" id="about">
+            <p>
+            For the duration of three days in October,
+            Viennese project spaces present
+            a varied program of openings, screenings,
+            talks, guided tours and performances.
+            </p>
+            <div class="link">
+                <a href="/program">Full program ⟶</a>
+            </div>
+            <p>
+            The Independent Space Index is a self-organized,
+            comprehensive index of local artist-run and independent
+            art spaces (also called “Off-Spaces” or Alternative Spaces) in Vienna.
+            </p>
+            <div class="link">
+                <a href="https://independentspaceindex.at">Check out the Index website ⟶</a>
+            </div>
+            <p>
+            The Index acts as a platform of representation for
+            the identically named local association of independent
+            art spaces, formed in late 2017 as a response to right-wing
+            politics and the threat of public cultural funding cuts in Austria.
+            </p>
+            <div class="newsletter_container">
+                <p>Subscribe to our newsletter</p>
+                <!-- Begin Mailchimp Signup Form -->
+                <div id="mc_embed_signup">
+                <form class="newsletter_form validate" action="https://independentspaceindex.us3.list-manage.com/subscribe/post?u=0374c316ca0bed48cd24b414d&amp;id=c15dfe900b" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" novalidate="novalidate">
+                    <div id="mc_embed_signup_scroll">
+                    <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" aria-required="true">
+                        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_0374c316ca0bed48cd24b414d_c15dfe900b" tabindex="-1" value=""></div>
+                    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
+                    <div id="mce-responses" class="clear">
+                        <div class="response" id="mce-error-response" style="display:none"></div>
+                        <div class="response" id="mce-success-response" style="display:none"></div>
+                    </div>
+                    </div>
+                </form>
+                </div>
+                <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+                <!--End mc_embed_signup-->
+            </div>
+            <p>Please direct any press inquiries or other questions to</p>
+            <div class="link">
+                <a class="break" href="mailto:contact@independentspaceindex.at">contact@independentspaceindex.at</a>
+            </div>
+            <br><br>
+        </article>
+    </main>
+</body>
+<script>
+
+    $(document).ready(function () {
+        toFormat(document.querySelectorAll('.terrorize'));
+        $(".popup__item").each(function () {
+            var randomtop = Math.floor(Math.random() * ($(this).parent().height() - $(this).height() - 20)),
+                randomleft = Math.floor(Math.random() * ($(this).parent().width() - $(this).width() - 20)),
+                randomRot = Math.floor((Math.random() * 10) - 5);
+            $(this).css({
+                "top": randomtop,
+                "left": randomleft,
+                "transform": `rotate(${randomRot}deg)`
+            });
+        });
+    });
+
+</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./assets/js/marquee3k.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .marquee3k__copy {
+            padding-right: .4em;
+            box-sizing: border-box;
+        }
+        .marq {
+            color: black;
+            background: red;
+            font-size: 2em;
+            font-family: 'Work Sans';
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+        .marquee3k {
+            padding: 0;
+            border-bottom: 1px solid red;
+            background: red;
+        }
+    </style>
+    <div class="marquee3k" 
+        data-speed="0.25"
+        data-pausable="false"
+    >
+    <div class="marq">
+        <a href="https://2020.independentspaceindex.at">
+            Independent Space Index 2020 ∕
+            October 22—24 ∕ 
+        </a>
+    </div>
+</div>
+<script>Marquee3k.init()</script>
+</body>
+</html>

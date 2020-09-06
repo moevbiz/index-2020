@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="">
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <script type="text/javascript" src="./assets/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="./assets/js/main.js"></script>
+    <title>Independent Space Index 2020</title>
+</head>
+<body>
+    <canvas id="canvas" style="z-index: -1000"></canvas>
+    <main style="background-color: white; width: 400px; max-width: 100%;">
+        <div class="terrorize program-header">
+            Independent
+            <br>
+            Space 
+            <br>
+            Index 
+            <br>
+            2020
+        </div>
+        <div class="filters" style="display: none">
+            <div class="filter-row filter-row-dates">
+                <div class="active">
+                    All dates
+                </div>
+                <div>
+                    October 22
+                </div>
+                <div>
+                    October 23
+                </div>
+                <div>
+                    October 24
+                </div>
+            </div>
+            <div class="filter-row filter-row-districts">
+                <div class="active">
+                    All districts
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="map"></div>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="height: 0">
+        <defs>
+          <filter id="goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+            <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
+</body>
+<script>
+    $(document).ready(function () {
+        toFormat(document.querySelectorAll('.terrorize'));
+    });
+
+    const sheetID = "1tSMISVbPxIEHT2WVUWAj2A4_SFxTZMUmv_eE1YL1Ff0";
+    const googleSheetUrl = `https://spreadsheets.google.com/feeds/list/${sheetID}/1/public/values?alt=json`;
+
+    async function getData() {
+        let response = await fetch(googleSheetUrl);
+        let data = await response.json()
+        return data;
+    }
+
+    async function getIndexApi() {
+        let response = await fetch('https://independentspaceindex.at/spaces.json')
+        let data = await response.json()
+        return data
+    }
+
+    let spacesAPI
+
+    getData()
+    .then(data => init(data));
+
+    getIndexApi()
+    .then(data => spacesAPI = data)
+    .then(() => console.log(spacesAPI));
+
+    let events = [];
+    let participatingSpaces = [];
+    let jsonFeatures = [];
+
+    function init(data) {
+        let districts = [];
+        console.log(data)
+        let entries = data.feed.entry
+        entries.forEach(entry => {
+            if (entry.gsx$confirmed.$t === "TRUE") {
+                participatingSpaces.push(entry.gsx$space.$t);
+                events.push({
+                    "title": entry.gsx$title.$t,
+                    "startDate": entry.gsx$startdate.$t,
+                    "startTime": entry.gsx$starttime.$t,
+                    "endDate": entry.gsx$enddate.$t,
+                    "endTime": entry.gsx$endtime.$t,
+                    "description": entry.gsx$description.$t,
+                    "space": entry.gsx$space.$t,
+                    "address": entry.gsx$address.$t,
+                    "district": entry.gsx$district.$t,
+                    "website": entry.gsx$website.$t,
+                    "lat": entry.gsx$lat.$t || spacesAPI.find(space => space.name === entry.gsx$space.$t).lat,
+                    "lon": entry.gsx$lon.$t || spacesAPI.find(space => space.name === entry.gsx$space.$t).lng,
+                })
+
+                districts.indexOf(entry.gsx$district.$t) === -1 ? districts.push(entry.gsx$district.$t) : console.log("already in array");
+            }
+        });
+
+        let elements = [];
+        events.forEach(event => {
+            elements.push(makeDiv(event))
+            console.log(event)
+            var feature = {type: 'Feature',
+                    properties: event,
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [event.lon, event.lat]
+                    }
+                };
+            jsonFeatures.push(feature);
+            // console.log(feature)
+        })
+        console.log(elements)
+        elements.forEach(element => {
+            document.querySelector('main').insertAdjacentHTML('beforeend', element)
+        })
+
+        districts.sort((a,b)=>a-b)
+        districts.forEach(district => {
+            makeDistrictDiv(district)
+        })
+
+        geojsonLayer = L.geoJson(jsonFeatures, {
+            style: function(feature) {
+                return {
+                    // color: '#ff0000'
+                };
+            },
+            pointToLayer: function(feature, latlng) {
+                return new L.CircleMarker(latlng, {
+                    radius: 10,
+                    fillOpacity: 1,
+                    stroke: true,
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 1,
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(
+                    `<a href="${feature.properties.website}">${feature.properties.space}</a>` + '<br>' +
+                    feature.properties.address + ', ' + toPLZ(feature.properties.district) + ' Vienna<br>' +
+                    `<a href="${feature.properties.website}">${feature.properties.website}</a>`
+                );
+            }
+        });
+
+        map.addLayer(geojsonLayer);
+
+        geojsonLayer.on("click", function (event) {
+            var clickedMarker = event.layer;
+            console.log(clickedMarker)
+        });
+
+    }
+
+    function makeDiv(event) {
+        let element = `
+            <div class="event">
+                <h3 class="program-header program-header-inline">${event.title}</h3>
+                <p>${duration(event.startDate, event.startTime, event.startDate, event.endTime)}</p>
+                <p>at <span class="terrorize program-header program-header-inline">${event.space}</span><br>
+                    ${event.address},
+                    ${formatDistrict(event.district, 'plz')}
+                    <br>
+                    ${event.website}</p>
+                <p>${event.description}</h3>
+            </div>
+        `
+        return element
+    }
+
+    function makeDistrictDiv(district) {
+        let element = `
+            <div>
+                ${formatDistrict(district, 'ordinal')}
+            </div>
+        `
+        return document.querySelector('.filter-row-districts').insertAdjacentHTML('beforeend', element)
+    }
+
+    function formatDistrict(district, format) {
+        if (format == 'ordinal') return toOrdinalSuffix(district)
+        if (format == 'plz') return toPLZ(district)
+    }
+
+    const toOrdinalSuffix = num => {
+        const int = parseInt(num),
+            digits = [int % 10, int % 100],
+            ordinals = ['st', 'nd', 'rd', 'th'],
+            oPattern = [1, 2, 3, 4],
+            tPattern = [11, 12, 13, 14, 15, 16, 17, 18, 19];
+        return oPattern.includes(digits[0]) && !tPattern.includes(digits[1])
+            ? int + ordinals[digits[0] - 1]
+            : int + ordinals[3];
+    }
+
+    const toPLZ = num => {
+        if (num < 10) {
+            num = `0${num}`
+        }
+        const PLZ = `1${num}0`
+        return PLZ;
+    };
+
+    function duration(startDate, startTime, endDate, endTime) {
+        start = new Date(startDate + ' ' + startTime)
+        end = new Date(endDate + ' ' + endTime)
+        if (start < end) {
+            if (start.getDate() == end.getDate()) return `${start.getDate()}. October, ${start.getTime()} — ${end.getTime()}`
+        }
+    }
+
+    // init map
+    var map = L.map('map').setView([48.2082, 16.3738], 13);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'independentspaceindex/ckerm5tiz79eu19s6nti3hpvq',
+        accessToken: 'pk.eyJ1IjoiaW5kZXBlbmRlbnRzcGFjZWluZGV4IiwiYSI6ImNrNW1tbjA5bDAza24zZXBkanFlc2ppcTQifQ.JnL1exWS78WBLlZrXn6BuQ'
+    }).addTo(map);
+
+</script>
+</html>
