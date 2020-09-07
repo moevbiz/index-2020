@@ -36,10 +36,10 @@
                     }
                 }
                 if (existingEntry = entries.find(prev => prev.space === entry.space)) {
+                    // existingEntry.push({events: entry.events})
                     console.log(existingEntry)
-                    Object.assign(existingEntry, entry)
                 }
-                entries.push(entry)
+                else entries.push(entry)
             })
             return entries
         }
