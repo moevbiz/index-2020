@@ -10,9 +10,9 @@
     <script type="text/javascript" src="./assets/js/main.js"></script>
     <title>Independent Space Index 2020</title>
 </head>
-<body>
+<body data-namespace="program">
     <canvas id="canvas" style="z-index: -1000"></canvas>
-    <main style="background-color: white; width: 400px; max-width: 100%;">
+    <main>
         <div class="terrorize program-header">
             Independent
             <br>
@@ -22,7 +22,7 @@
             <br>
             2020
         </div>
-        <div class="filters" style="display: none">
+        <div class="filters">
             <div class="filter-row filter-row-dates">
                 <div class="active">
                     All dates
@@ -145,20 +145,26 @@
                 };
             },
             pointToLayer: function(feature, latlng) {
-                return new L.CircleMarker(latlng, {
-                    radius: 10,
-                    fillOpacity: 1,
-                    stroke: true,
-                    color: '#ffffff',
-                    weight: 3,
-                    opacity: 1,
-                });
+                // return new L.CircleMarker(latlng, {
+                //     radius: 10,
+                //     fillOpacity: 1,
+                //     stroke: true,
+                //     color: '#ffffff',
+                //     weight: 3,
+                //     opacity: 1,
+                // });
+                return new L.marker(latlng, {
+                    icon: L.divIcon({
+                        className: 'marker-icon',
+                        html: new Date(feature.properties.startDate).getDate(),
+                    })
+                })
             },
             onEachFeature: function (feature, layer) {
                 layer.bindPopup(
-                    `<a href="${feature.properties.website}">${feature.properties.space}</a>` + '<br>' +
+                    String(`<a href="${feature.properties.website}">${feature.properties.space}</a>` + '<br>' +
                     feature.properties.address + ', ' + toPLZ(feature.properties.district) + ' Vienna<br>' +
-                    `<a href="${feature.properties.website}">${feature.properties.website}</a>`
+                    `<a href="${feature.properties.website}">${feature.properties.website}</a>`)
                 );
             }
         });

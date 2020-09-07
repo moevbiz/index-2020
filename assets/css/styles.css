@@ -198,6 +198,16 @@ article input[type="email"] {
     font-size: 1em;
 }
 
+
+/** &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& PROGRAM * */
+
+[data-namespace="program"] main {
+    width: 500px;
+    /* background: linear-gradient(to right, rgba(255, 255, 255, 1) 350px, rgba(255, 255, 255, 0)) */
+    background: white;
+}
+
+
 .program-header {
     font-weight: normal;
     margin: 0;
@@ -231,7 +241,7 @@ article input[type="email"] {
 }
 
 .filter-row {
-    filter: url('#goo');
+    /* filter: url('#goo'); */
     display: flex;
     margin-left: 1em;
 }
@@ -256,10 +266,28 @@ article input[type="email"] {
 }
 
 #map {
-    background: transparent;
+    background: rgba(255,255,255,0.3);
     position: fixed;
     left: 400px;
     width: calc(100vw - 400px);
     height: 100%;
     top: 0;
+    /* mix-blend-mode: color-burn; */
+}
+
+.marker-icon {
+    width: 24px !important;
+    height: 24px !important;
+    margin-left: -12px;
+    margin-top: -12px;
+    border-radius: 50%;
+    text-align: center;
+    color: white;
+    background-color: black;
+    border: 3px solid black;
+    font-size: 16px;
+}
+
+.leaflet-marker-pane {
+    filter: url('#goo')
 }
