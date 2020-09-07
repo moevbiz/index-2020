@@ -12,7 +12,7 @@
     <canvas id="canvas"></canvas>
     <div class="seedInfo">
         Seed: "<span id="seed-info"></span>"
-        <div class="infoButton">?</div>
+        <div class="infoButton" style="cursor: pointer;" onclick="seedInfoAlert()">?</div>
     </div>
     <main>
         <h1 class="largeText terrorize">
@@ -29,7 +29,8 @@
         </h2>
         <div class="popup">
             <div class="popup__item">
-                <div>Program<br>now online!</div>
+                <!-- <div>Program<br>now online!</div> -->
+                <div>Program<br>online soon!</div>
             </div>
         </div>
         <article class="text" id="about">
@@ -39,11 +40,11 @@
             a varied program of openings, screenings,
             talks, guided tours and performances.
             </p>
-            <div class="link">
+            <!-- <div class="link">
                 <a href="/program">Full program ⟶</a>
-            </div>
+            </div> -->
             <p>
-            The Independent Space Index is a self-organized,
+            Independent Space Index is a self-organized,
             comprehensive index of local artist-run and independent
             art spaces (also called “Off-Spaces” or Alternative Spaces) in Vienna.
             </p>
@@ -85,6 +86,11 @@
     </main>
 </body>
 <script>
+
+    function seedInfoAlert() {
+        text = `Different gradient patterns are generated on basis of a variable parameter ("Seed"), corresponding to a random entry listed on independentspaceindex.at.`
+        alert(text)
+    }
 
     $(document).ready(function () {
         toFormat(document.querySelectorAll('.terrorize'));

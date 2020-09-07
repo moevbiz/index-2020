@@ -173,7 +173,7 @@ $(function() {
 
 	if ("seed" in params) {
 		console.log(params.seed)
-		indexArgs.seed = params.seed
+		indexArgs.seed = decodeURI(params.seed)
 		init(indexArgs);
 	} else {
 		getSeed(indexArgs);

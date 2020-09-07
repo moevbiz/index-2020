@@ -18,7 +18,13 @@
                         space: space.name,
                         address: space.address,
                         district: space.district,
-                        website: space.website
+                        website: space.website,
+                        events: {
+                            title: event.gsx$title.$t,
+                            start: event.gsx$startdate.$t,
+                            end: event.gsx$enddate.$t,
+                            description: event.gsx$description.$t,
+                        }
                     };
                 }
                 else {
@@ -28,6 +34,10 @@
                         district: event.gsx$district.$t,
                         website: event.gsx$website.$t,
                     }
+                }
+                if (existingEntry = entries.find(prev => prev.space === entry.space)) {
+                    console.log(existingEntry)
+                    Object.assign(existingEntry, entry)
                 }
                 entries.push(entry)
             })
