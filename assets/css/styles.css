@@ -285,6 +285,7 @@ article input[type="email"] {
 
 #map {
     background: rgba(255,255,255,0.3);
+    background: transparent;
     position: fixed;
     left: 400px;
     width: calc(100vw - 400px);
