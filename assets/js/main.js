@@ -5,7 +5,24 @@ $(function() {
 	// presets
 
 	seeds = [];
-	getSeed();
+	// getSeed();
+
+	var params = getSearchParameters();
+
+	function getSearchParameters() {
+		var prmstr = window.location.search.substr(1);
+		return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+	}
+	
+	function transformToAssocArray( prmstr ) {
+		var params = {};
+		var prmarr = prmstr.split("&");
+		for ( var i = 0; i < prmarr.length; i++) {
+			var tmparr = prmarr[i].split("=");
+			params[tmparr[0]] = tmparr[1];
+		}
+		return params;
+	}
 
 	async function getSeed() {
 		let res = await fetch('https://independentspaceindex.at/spaces.json')
@@ -152,6 +169,14 @@ $(function() {
 		setArgs(args);
 		resize();
 		startUpdate();
+	}
+
+	if ("seed" in params) {
+		console.log(params.seed)
+		indexArgs.seed = params.seed
+		init(indexArgs);
+	} else {
+		getSeed(indexArgs);
 	}
 });
 
