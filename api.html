@@ -19,13 +19,15 @@
                         address: space.address,
                         district: space.district,
                         website: space.website,
-                        events: {
-                            title: event.gsx$title.$t,
-                            start: event.gsx$startdate.$t,
-                            end: event.gsx$enddate.$t,
-                            description: event.gsx$description.$t,
-                        }
-                    };
+                        events: [
+                            {
+                                title: event.gsx$title.$t,
+                                start: event.gsx$startdate.$t,
+                                end: event.gsx$enddate.$t,
+                                description: event.gsx$description.$t,
+                            }
+                        ]
+                    }
                 }
                 else {
                     entry = {
@@ -35,9 +37,9 @@
                         website: event.gsx$website.$t,
                     }
                 }
+
                 if (existingEntry = entries.find(prev => prev.space === entry.space)) {
-                    // existingEntry.push({events: entry.events})
-                    console.log(existingEntry)
+                    existingEntry.events.push(entry.events[0])
                 }
                 else entries.push(entry)
             })
@@ -54,9 +56,13 @@
         .then(([spacesData, eventsData]) => {
             console.log([spacesData, eventsData.feed.entry])
             const result = join(spacesData, eventsData.feed.entry);
-            console.log(result);
+            build(result);
         })
         .catch(err => console.error(err));
     }
     getResults()
+
+    const build = (res) => {
+        console.log(res)
+    }
 </script>
