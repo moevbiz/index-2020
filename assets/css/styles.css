@@ -78,6 +78,10 @@ main {
     z-index: 300;
 }
 
+a {
+    color: inherit;
+}
+
 h1 {
     margin: 0;
     padding: 0;
@@ -166,7 +170,7 @@ div.link {
     text-indent: 2em;
 }
 
-article a {
+article a:not(.normal) {
     font-family: "Work Sans";
     text-transform: uppercase;
     text-decoration: none;
@@ -222,7 +226,7 @@ article input[type="email"] {
 [data-namespace="program"] main {
     width: 500px;
     /* background: linear-gradient(to right, rgba(255, 255, 255, 1) 350px, rgba(255, 255, 255, 0)) */
-    background: white;
+    /* background: white; */
 }
 
 
@@ -234,7 +238,7 @@ article input[type="email"] {
     text-transform: uppercase;
     font-weight: 600;
     line-height: .75em;
-    font-size: 3em;
+    font-size: 8vw;
     padding: 20px;
 }
 
@@ -247,32 +251,53 @@ article input[type="email"] {
     box-sizing: border-box;
     padding: 20px;
     border-top: 3px solid;
-    background: white;
+    /* background: white; */
     max-width: 100%;
-    width: 400px;
+    width: 500px;
+}
+
+.event p {
+    font-size: 1.5em;
+    margin: 0;
+    margin-top: .5em;
+    /* font-family: "Work Sans"; */
+}
+
+.event h3 {
+    font-size: 1.5em;
 }
 
 .filters {
     position: fixed;
-    left: 420px;
-    top: 20px;
+    right: 20px;
+    bottom: 40px;
+    font-family: "Work Sans";
+    font-size: 8vw;
+    line-height: .8em;
+    text-align: right;
 }
 
 .filter-row {
     /* filter: url('#goo'); */
-    display: flex;
+    /* display: flex; */
     margin-left: 1em;
 }
 
 .filter-row div {
-    font-family: "Work Sans";
-    background: black;
     border-radius: 50%;
-    padding: 1em;
-    color: white;
-    margin-right: -.5em;
     transform: scale(1);
     transition: all .1s linear;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.filter-row div::before {
+    content: "OCT";
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -70%);
+    font-size: .3em;
 }
 
 .filter-row div:hover {
@@ -287,12 +312,21 @@ article input[type="email"] {
     background: rgba(255,255,255,0.3);
     background: transparent;
     position: fixed;
-    left: 400px;
-    width: calc(100vw - 400px);
+    /* left: 400px; */
+    /* width: calc(100vw - 400px); */
+    width: 100%;
     height: 100%;
     top: 0;
     /* mix-blend-mode: color-burn; */
 }
+
+    .leaflet-container .leaflet-control-attribution {
+        background: transparent;
+        color: black;
+    }
+    .leaflet-container .leaflet-control-attribution a {
+        color: inherit;
+    }
 
 .marker-icon {
     width: 24px !important;
@@ -305,8 +339,14 @@ article input[type="email"] {
     background-color: black;
     border: 3px solid black;
     font-size: 16px;
+    animation: fadein 2s;
 }
 
 .leaflet-marker-pane {
     filter: url('#goo')
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

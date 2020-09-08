@@ -22,22 +22,22 @@
             <br>
             2020
         </div>
-        <div class="filters" style="display: none">
+        <div class="filters">
             <div class="filter-row filter-row-dates">
-                <div class="active">
-                    All dates
-                </div>
                 <div>
-                    October 22
-                </div>
+                    <!-- <span class="mon">Oct</span> -->
+                    <span>22</span>
+                </div>,
                 <div>
-                    October 23
-                </div>
+                    <!-- <span class="mon">Oct</span> -->
+                    <span>23</span>
+                </div>,
                 <div>
-                    October 24
+                    <!-- <span class="mon">Oct</span> -->
+                    <span>24</span>
                 </div>
             </div>
-            <div class="filter-row filter-row-districts">
+            <div class="filter-row filter-row-districts" style="display: none">
                 <div class="active">
                     All districts
                 </div>
@@ -156,16 +156,16 @@
                 return new L.marker(latlng, {
                     icon: L.divIcon({
                         className: 'marker-icon',
-                        html: new Date(feature.properties.startDate).getDate(),
+                        // html: new Date(feature.properties.startDate).getDate(),
                     })
                 })
             },
             onEachFeature: function (feature, layer) {
-                layer.bindPopup(
-                    String(`<a href="${feature.properties.website}">${feature.properties.space}</a>` + '<br>' +
-                    feature.properties.address + ', ' + toPLZ(feature.properties.district) + ' Vienna<br>' +
-                    `<a href="${feature.properties.website}">${feature.properties.website}</a>`)
-                );
+                // layer.bindPopup(
+                //     String(`<a href="${feature.properties.website}">${feature.properties.space}</a>` + '<br>' +
+                //     feature.properties.address + ', ' + toPLZ(feature.properties.district) + ' Vienna<br>' +
+                //     `<a href="${feature.properties.website}">${feature.properties.website}</a>`)
+                // );
             }
         });
 
@@ -179,16 +179,27 @@
     }
 
     function makeDiv(event) {
+        // let element = `
+        //     <div class="event">
+        //         <h3 class="program-header program-header-inline">${event.title}</h3>
+        //         <p>${duration(event.startDate, event.startTime, event.startDate, event.endTime)}</p>
+        //         <p>at <span class="terrorize program-header program-header-inline">${event.space}</span><br>
+        //             ${event.address},
+        //             ${formatDistrict(event.district, 'plz')}
+        //             <br>
+        //             ${event.website}</p>
+        //         <p>${event.description}</h3>
+        //     </div>
+        // `
         let element = `
             <div class="event">
-                <h3 class="program-header program-header-inline">${event.title}</h3>
-                <p>${duration(event.startDate, event.startTime, event.startDate, event.endTime)}</p>
-                <p>at <span class="terrorize program-header program-header-inline">${event.space}</span><br>
-                    ${event.address},
-                    ${formatDistrict(event.district, 'plz')}
-                    <br>
-                    ${event.website}</p>
-                <p>${event.description}</h3>
+                <h3><span class="terrorize program-header program-header-inline">${event.space}</span></h3>
+                <p>
+                ${event.address},
+                ${formatDistrict(event.district, 'plz')}
+                <br>
+                ${event.website}
+                </p>
             </div>
         `
         return element
@@ -236,7 +247,9 @@
     }
 
     // init map
-    var map = L.map('map').setView([48.2082, 16.3738], 13);
+    var map = L.map('map', {
+        zoomControl: false,
+    }).setView([48.2082, 16.3738], 13);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
