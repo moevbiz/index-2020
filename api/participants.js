@@ -49,10 +49,6 @@ const join = (spaces, events) => {
     return entries
 }
 
-// app.get('/api/participants', (req, res) => {
-//     res.send(result)
-// })
-
 function getSpaces() {
     return axios.get(indexAPI);
 }
@@ -61,24 +57,13 @@ function getEvents() {
     return axios.get(googleSheetUrl);
 }
 
-Promise.all([getSpaces(), getEvents()])
-.then(([spacesData, eventsData]) => {
-    console.log([spacesData, eventsData.feed.entry])
-    const result = join(spacesData, eventsData.feed.entry);
-})
-.catch(err => console.error(err));
-
 app.get('/api/participants', (req, res, next) => {
-    console.log("'/api/participants' call");
     Promise.all([getSpaces(), getEvents()])
     .then(([spacesData, eventsData]) => {
         console.log([spacesData.data, eventsData.data.feed.entry])
         res.json(join(spacesData.data, eventsData.data.feed.entry));
     })
     .catch(err => next(err));
-    // axios.get(indexAPI)
-    // .then(data => res.send(data.data))
-    // .catch(err => next(err));
 })
 
 app.listen(port, () => {
