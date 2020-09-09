@@ -156,7 +156,7 @@
                 return new L.marker(latlng, {
                     icon: L.divIcon({
                         className: 'marker-icon',
-                        // html: new Date(feature.properties.startDate).getDate(),
+                        html: `<span>${feature.properties.space}</span>`
                     })
                 })
             },
@@ -249,6 +249,7 @@
     // init map
     var map = L.map('map', {
         zoomControl: false,
+        zoomSnap: 0.5,
     }).setView([48.2082, 16.3738], 13);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}', {

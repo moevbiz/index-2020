@@ -342,6 +342,24 @@ article input[type="email"] {
     animation: fadein 2s;
 }
 
+.marker-icon span {
+    color: black;
+    font-family: "Work Sans";
+    font-weight: 400;
+    text-transform: uppercase;
+    position: absolute;
+    width: 300px;
+    text-align: left;
+    margin-left: 1.5em;
+    opacity: 0;
+    transition: opacity .0s linear;
+    pointer-events: none;
+}
+
+.marker-icon:hover span {
+    opacity: 1;
+}
+
 .leaflet-marker-pane {
     filter: url('#goo')
 }

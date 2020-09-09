@@ -70,9 +70,15 @@ Promise.all([getSpaces(), getEvents()])
 
 app.get('/api/participants', (req, res, next) => {
     console.log("'/api/participants' call");
-    axios.get(indexAPI)
-    .then(data => res.send(data.data))
+    Promise.all([getSpaces(), getEvents()])
+    .then(([spacesData, eventsData]) => {
+        console.log([spacesData.data, eventsData.data.feed.entry])
+        res.json(join(spacesData.data, eventsData.data.feed.entry));
+    })
     .catch(err => next(err));
+    // axios.get(indexAPI)
+    // .then(data => res.send(data.data))
+    // .catch(err => next(err));
 })
 
 app.listen(port, () => {
