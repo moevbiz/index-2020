@@ -60,29 +60,16 @@
         toFormat(document.querySelectorAll('.terrorize'));
     });
 
-    const sheetID = "1tSMISVbPxIEHT2WVUWAj2A4_SFxTZMUmv_eE1YL1Ff0";
-    const googleSheetUrl = `https://spreadsheets.google.com/feeds/list/${sheetID}/1/public/values?alt=json`;
+    const api = `api/participants`;
 
     async function getData() {
-        let response = await fetch(googleSheetUrl);
+        let response = await fetch(api);
         let data = await response.json()
         return data;
     }
 
-    async function getIndexApi() {
-        let response = await fetch('https://independentspaceindex.at/spaces.json')
-        let data = await response.json()
-        return data
-    }
-
-    let spacesAPI
-
     getData()
     .then(data => init(data));
-
-    getIndexApi()
-    .then(data => spacesAPI = data)
-    .then(() => console.log(spacesAPI));
 
     let events = [];
     let participatingSpaces = [];
@@ -91,42 +78,20 @@
     function init(data) {
         let districts = [];
         console.log(data)
-        let entries = data.feed.entry
-        entries.forEach(entry => {
-            if (entry.gsx$confirmed.$t === "TRUE") {
-                participatingSpaces.push(entry.gsx$space.$t);
-                events.push({
-                    "title": entry.gsx$title.$t,
-                    "startDate": entry.gsx$startdate.$t,
-                    "startTime": entry.gsx$starttime.$t,
-                    "endDate": entry.gsx$enddate.$t,
-                    "endTime": entry.gsx$endtime.$t,
-                    "description": entry.gsx$description.$t,
-                    "space": entry.gsx$space.$t,
-                    "address": entry.gsx$address.$t,
-                    "district": entry.gsx$district.$t,
-                    "website": entry.gsx$website.$t,
-                    "lat": entry.gsx$lat.$t || spacesAPI.find(space => space.name === entry.gsx$space.$t).lat,
-                    "lon": entry.gsx$lon.$t || spacesAPI.find(space => space.name === entry.gsx$space.$t).lng,
-                })
-
-                districts.indexOf(entry.gsx$district.$t) === -1 ? districts.push(entry.gsx$district.$t) : console.log("already in array");
-            }
-        });
 
         let elements = [];
-        events.forEach(event => {
-            elements.push(makeDiv(event))
-            console.log(event)
+        data.forEach(participant => {
+            elements.push(makeDiv(participant))
+            console.log(participant)
             var feature = {type: 'Feature',
-                    properties: event,
+                    properties: participant,
                     geometry: {
                         type: 'Point',
-                        coordinates: [event.lon, event.lat]
+                        coordinates: [participant.lng, participant.lat]
                     }
                 };
             jsonFeatures.push(feature);
-            // console.log(feature)
+            console.log(feature)
         })
         console.log(elements)
         elements.forEach(element => {
@@ -179,18 +144,6 @@
     }
 
     function makeDiv(event) {
-        // let element = `
-        //     <div class="event">
-        //         <h3 class="program-header program-header-inline">${event.title}</h3>
-        //         <p>${duration(event.startDate, event.startTime, event.startDate, event.endTime)}</p>
-        //         <p>at <span class="terrorize program-header program-header-inline">${event.space}</span><br>
-        //             ${event.address},
-        //             ${formatDistrict(event.district, 'plz')}
-        //             <br>
-        //             ${event.website}</p>
-        //         <p>${event.description}</h3>
-        //     </div>
-        // `
         let element = `
             <div class="event">
                 <h3><span class="terrorize program-header program-header-inline">${event.space}</span></h3>
