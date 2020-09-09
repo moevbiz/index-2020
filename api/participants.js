@@ -22,6 +22,8 @@ const join = (spaces, events) => {
                 address: space.address,
                 district: space.district,
                 website: space.website,
+                lat: space.lat,
+                lng: space.lng,
                 events: [
                     {
                         title: event.gsx$title.$t,
@@ -38,6 +40,16 @@ const join = (spaces, events) => {
                 address: event.gsx$address.$t,
                 district: event.gsx$district.$t,
                 website: event.gsx$website.$t,
+                lat: event.gsx$lat.$t,
+                lng: event.gsx$lat.$t,
+                events: [
+                    {
+                        title: event.gsx$title.$t,
+                        start: event.gsx$startdate.$t,
+                        end: event.gsx$enddate.$t,
+                        description: event.gsx$description.$t,
+                    }
+                ]
             }
         }
 
@@ -60,8 +72,8 @@ function getEvents() {
 app.get('/api/participants', (req, res, next) => {
     Promise.all([getSpaces(), getEvents()])
     .then(([spacesData, eventsData]) => {
-        console.log([spacesData.data, eventsData.data.feed.entry])
-        res.json(join(spacesData.data, eventsData.data.feed.entry));
+        let result = join(spacesData.data, eventsData.data.feed.entry)
+        res.json(result)
     })
     .catch(err => next(err));
 })
