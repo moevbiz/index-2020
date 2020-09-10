@@ -60,6 +60,7 @@ const join = (spaces, events) => {
 
         if (existingEntry = entries.find(prev => prev.space === entry.space)) {
             existingEntry.events.push(entry.events[0])
+            // existingEntry.date = existingEntry.concat('+', entry.events[0].date)
         }
         else entries.push(entry)
     })

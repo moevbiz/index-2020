@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+    <script type="text/javascript" src="./assets/js/activearea.js"></script>
     <script type="text/javascript" src="./assets/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="./assets/js/main.js"></script>
     <title>Independent Space Index 2020</title>
@@ -13,7 +14,13 @@
 <body data-namespace="program" data-view="program">
     <canvas id="canvas" style="z-index: -1000"></canvas>
     <main>
-        <div class="terrorize program-header">
+        <div class="terrorize program-header"
+        style="
+        position: fixed;
+        left: 500px;
+        top: 0;
+        pointer-events: none;
+        ">
             Independent
             <br>
             Space 
@@ -24,18 +31,15 @@
         </div>
         <div class="filters">
             <div class="filter-row filter-row-dates">
-                <div>
-                    <!-- <span class="mon">Oct</span> -->
-                    <span>22</span>
-                </div>,
-                <div>
-                    <!-- <span class="mon">Oct</span> -->
-                    <span>23</span>
-                </div>,
-                <div>
-                    <!-- <span class="mon">Oct</span> -->
-                    <span>24</span>
-                </div>
+                <button class="reset-button filter date-filter" data-date="22">
+                    22
+                </button>,
+                <button class="reset-button filter date-filter" data-date="23">
+                    23
+                </button>,
+                <button class="reset-button filter date-filter" data-date="24">
+                    24
+                </button>
             </div>
             <div class="filter-row filter-row-districts" style="display: none">
                 <div class="active">
@@ -43,8 +47,13 @@
                 </div>
             </div>
         </div>
+        <div class="participants">
+
+        </div>
     </main>
-    <div id="map"></div>
+    <div id="map">
+        <div class="activeArea"></div>
+    </div>
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="height: 0">
         <defs>
           <filter id="goo">
@@ -59,6 +68,14 @@
     $(document).ready(function () {
         toFormat(document.querySelectorAll('.terrorize'));
     });
+
+    document.addEventListener('click', function(e) {
+        console.log(e.target)
+        if (e.target.classList.contains('filter')) {
+            console.log('filter');
+            dateView(e.target.dataset.date)
+        }
+    })
 
     const api = `api/participants`;
 
@@ -99,7 +116,7 @@
         })
         console.log(elements)
         elements.forEach(element => {
-            document.querySelector('main').insertAdjacentHTML('beforeend', element)
+            document.querySelector('.participants').insertAdjacentHTML('beforeend', element)
         })
 
         districts.sort((a,b)=>a-b)
@@ -144,18 +161,21 @@
 
     }
 
-    function makeDiv(event) {
+    function makeDiv(participant) {
         let element = `
-            <div class="participant ${params.space && params.space == event.spaceId ? '' : 'hidden'}" data-space-id="${event.spaceId}">
-                <h3><span class="terrorize program-header program-header-inline">${event.space}</span></h3>
+            <div class="participant 
+            ${params.space && params.space == participant.spaceId ? '' : 'hidden'}"
+            data-date="23"
+            data-space-id="${participant.spaceId}">
+                <h3><span class="terrorize program-header program-header-inline">${participant.space}</span></h3>
                 <p>
-                ${event.address},
-                ${formatDistrict(event.district, 'plz')}
+                ${participant.address},
+                ${formatDistrict(participant.district, 'plz')}
                 <br>
-                ${event.website}
+                ${participant.website}
                 </p>
-                ${Object.keys(event.events).map(function (key) {
-                    return `<li>${event.events[key].title}</li>`
+                ${Object.keys(participant.events).map(function (key) {
+                    return `<li>${participant.events[key].title}</li>`
                 }).join("")}
             </div>
         `
@@ -204,10 +224,17 @@
     }
 
     // init map
-    const map = L.map('map', {
+    // const map = L.map('map', {
+    //     zoomControl: false,
+    //     zoomSnap: 0.5,
+    // }).setView([48.2082, 16.3738], 13);
+
+    const map = new L.Map('map', {
         zoomControl: false,
         zoomSnap: 0.5,
-    }).setView([48.2082, 16.3738], 13);
+    })
+    .setView([48.2082, 16.3738], 13)
+    .setActiveArea('activeArea', true);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -221,12 +248,28 @@
     const spaceView = (spaceId) => {
         let divs = document.querySelectorAll('[data-space-id]')
         divs.forEach(div => {
-            if (div.dataset.spaceId == spaceId) return;
-            div.classList.add('hidden')
+            if (div.dataset.spaceId == spaceId) {
+                div.classList.remove('hidden')
+            } else {
+                div.classList.add('hidden')
+            }
         })
         // let spaceCoords = [getSpace(spaceId).lat, getSpace(spaceId).lng]
         // map.flyTo(spaceCoords)
         document.body.dataset.view="space"
+    }
+
+    const dateView = (date) => {
+        let divs = document.querySelectorAll('[data-date]')
+        divs.forEach(div => {
+            let dates = div.dataset.date.split('+')
+            if (dates.includes(date)) {
+                div.classList.remove('hidden')
+            } else {
+                div.classList.add('hidden')
+            }
+        })
+        document.body.dataset.view="date"
     }
 
 

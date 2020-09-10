@@ -12,6 +12,30 @@
     font-display: swap;
 }
 
+.reset-button {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+
+    background: transparent;
+
+    /* inherit font & color from ancestor */
+    color: inherit;
+    font: inherit;
+
+    /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+    line-height: normal;
+
+    /* Corrects font smoothing for webkit */
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+
+    /* Corrects inability to style clickable `input` types in iOS */
+    -webkit-appearance: none;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -74,6 +98,7 @@ h1, h2, h3, h4, h5, h6 {
     }
 
 main {
+    height: 100%;
     position: relative;
     z-index: 300;
 }
@@ -223,6 +248,10 @@ article input[type="email"] {
 
 /** &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& PROGRAM * */
 
+/** views */
+
+/** program */
+
 [data-namespace="program"] main {
     width: 500px;
     /* background: linear-gradient(to right, rgba(255, 255, 255, 1) 350px, rgba(255, 255, 255, 0)) */
@@ -232,6 +261,8 @@ article input[type="email"] {
 [data-namespace="program"] .marker-icon {
     animation: fadein 2s;
 }
+
+/** space */
 
 [data-view="space"] .program-header {
     font-size: 6vw;
@@ -246,6 +277,12 @@ article input[type="email"] {
     display: none;
 }
 
+/** date */
+
+[data-view="date"] .hidden {
+    display: none;
+}
+
 
 .program-header {
     font-weight: normal;
@@ -255,7 +292,7 @@ article input[type="email"] {
     text-transform: uppercase;
     font-weight: 600;
     line-height: .75em;
-    font-size: 8vw;
+    font-size: 6vw;
     padding: 20px;
     transition: font-size .1s linear;
 }
@@ -265,10 +302,15 @@ article input[type="email"] {
     padding: 0;
 }
 
+.participants {
+    min-height: 100%;
+    border-right: 3px solid black;
+}
+
 .participant {
     box-sizing: border-box;
     padding: 20px;
-    border-top: 3px solid;
+    /* border-right: 3px solid; */
     /* background: white; */
     max-width: 100%;
     width: 500px;
@@ -277,6 +319,10 @@ article input[type="email"] {
 
 .participant:hover {
     background: white;
+    border-top: 3px solid;
+    border-bottom: 3px solid;
+    margin-top: -3px;
+    margin-bottom: -3px;
 }
 
 .participant p {
@@ -301,7 +347,7 @@ article input[type="email"] {
     margin-left: 1em;
 }
 
-.filter-row div {
+.filter {
     border-radius: 50%;
     transform: scale(1);
     transition: all .1s linear;
@@ -310,7 +356,7 @@ article input[type="email"] {
     cursor: pointer;
 }
 
-.filter-row div::before {
+.filter::before {
     content: "OCT";
     position: absolute;
     left: 50%;
@@ -318,12 +364,22 @@ article input[type="email"] {
     font-size: .3em;
 }
 
-.filter-row div:hover {
+.filter:hover {
     transform: scale(1.2);
 }
 
 .filter-row .active {
     transform: scale(1.2);
+}
+
+/** map */
+
+.activeArea { 
+    position: absolute;
+    width: calc(100vw - 500px);
+    height: 100%;
+    left: 500px;
+    top: 0;
 }
 
 #map {
@@ -354,8 +410,8 @@ article input[type="email"] {
     border-radius: 50%;
     text-align: center;
     color: white;
-    background-color: black;
-    border: 3px solid black;
+    background-color: white;
+    border: 3px solid white;
     font-size: 16px;
 }
 
