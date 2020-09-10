@@ -10,7 +10,7 @@
     <script type="text/javascript" src="./assets/js/main.js"></script>
     <title>Independent Space Index 2020</title>
 </head>
-<body data-namespace="program">
+<body data-namespace="program" data-view="program">
     <canvas id="canvas" style="z-index: -1000"></canvas>
     <main>
         <div class="terrorize program-header">
@@ -75,6 +75,10 @@
     let participatingSpaces = [];
     let jsonFeatures = [];
 
+    function getSpace(spaceId) {
+        return participatingSpaces.find(element => element.spaceId == spaceId)
+    }
+
     function init(data) {
         let districts = [];
         console.log(data)
@@ -82,6 +86,7 @@
         let elements = [];
         data.forEach(participant => {
             elements.push(makeDiv(participant))
+            participatingSpaces.push(participant)
             console.log(participant)
             var feature = {type: 'Feature',
                     properties: participant,
@@ -91,7 +96,6 @@
                     }
                 };
             jsonFeatures.push(feature);
-            console.log(feature)
         })
         console.log(elements)
         elements.forEach(element => {
@@ -110,17 +114,9 @@
                 };
             },
             pointToLayer: function(feature, latlng) {
-                // return new L.CircleMarker(latlng, {
-                //     radius: 10,
-                //     fillOpacity: 1,
-                //     stroke: true,
-                //     color: '#ffffff',
-                //     weight: 3,
-                //     opacity: 1,
-                // });
                 return new L.marker(latlng, {
                     icon: L.divIcon({
-                        className: 'marker-icon',
+                        className: `marker-icon ${params.space && params.space == feature.properties.spaceId ? '' : 'hidden'}`,
                         html: `<span>${feature.properties.space}</span>`
                     })
                 })
@@ -141,11 +137,16 @@
             console.log(clickedMarker)
         });
 
+        if (params.space) {
+            let spaceCoords = [getSpace(params.space).lat, getSpace(params.space).lng]
+            map.flyTo(spaceCoords, 15)
+        }
+
     }
 
     function makeDiv(event) {
         let element = `
-            <div class="event">
+            <div class="participant ${params.space && params.space == event.spaceId ? '' : 'hidden'}" data-space-id="${event.spaceId}">
                 <h3><span class="terrorize program-header program-header-inline">${event.space}</span></h3>
                 <p>
                 ${event.address},
@@ -153,6 +154,9 @@
                 <br>
                 ${event.website}
                 </p>
+                ${Object.keys(event.events).map(function (key) {
+                    return `<li>${event.events[key].title}</li>`
+                }).join("")}
             </div>
         `
         return element
@@ -200,7 +204,7 @@
     }
 
     // init map
-    var map = L.map('map', {
+    const map = L.map('map', {
         zoomControl: false,
         zoomSnap: 0.5,
     }).setView([48.2082, 16.3738], 13);
@@ -211,6 +215,46 @@
         id: 'independentspaceindex/ckerm5tiz79eu19s6nti3hpvq',
         accessToken: 'pk.eyJ1IjoiaW5kZXBlbmRlbnRzcGFjZWluZGV4IiwiYSI6ImNrNW1tbjA5bDAza24zZXBkanFlc2ppcTQifQ.JnL1exWS78WBLlZrXn6BuQ'
     }).addTo(map);
+
+
+    // views
+    const spaceView = (spaceId) => {
+        let divs = document.querySelectorAll('[data-space-id]')
+        divs.forEach(div => {
+            if (div.dataset.spaceId == spaceId) return;
+            div.classList.add('hidden')
+        })
+        // let spaceCoords = [getSpace(spaceId).lat, getSpace(spaceId).lng]
+        // map.flyTo(spaceCoords)
+        document.body.dataset.view="space"
+    }
+
+
+    // params
+
+    var params = getSearchParameters();
+
+	function getSearchParameters() {
+		var prmstr = window.location.search.substr(1);
+		return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+	}
+	
+	function transformToAssocArray( prmstr ) {
+		var params = {};
+		var prmarr = prmstr.split("&");
+		for ( var i = 0; i < prmarr.length; i++) {
+			var tmparr = prmarr[i].split("=");
+			params[tmparr[0]] = tmparr[1];
+		}
+		return params;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        if (params.space) {
+            console.log(params.space)
+            spaceView(params.space)
+        }
+    })
 
 </script>
 </html>

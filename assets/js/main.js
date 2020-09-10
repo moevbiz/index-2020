@@ -175,6 +175,9 @@ $(function() {
 		console.log(params.seed)
 		indexArgs.seed = decodeURI(params.seed)
 		init(indexArgs);
+	} else if ("space" in params) {
+		indexArgs.seed = params.space
+		init(indexArgs)
 	} else {
 		getSeed(indexArgs);
 	}

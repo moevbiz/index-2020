@@ -229,6 +229,23 @@ article input[type="email"] {
     /* background: white; */
 }
 
+[data-namespace="program"] .marker-icon {
+    animation: fadein 2s;
+}
+
+[data-view="space"] .program-header {
+    font-size: 6vw;
+}
+
+[data-view="space"] .filter-row {
+    font-size: 6vw;
+    display: none;
+}
+
+[data-view="space"] .hidden {
+    display: none;
+}
+
 
 .program-header {
     font-weight: normal;
@@ -240,6 +257,7 @@ article input[type="email"] {
     line-height: .75em;
     font-size: 8vw;
     padding: 20px;
+    transition: font-size .1s linear;
 }
 
 .program-header-inline {
@@ -247,24 +265,24 @@ article input[type="email"] {
     padding: 0;
 }
 
-.event {
+.participant {
     box-sizing: border-box;
     padding: 20px;
     border-top: 3px solid;
     /* background: white; */
     max-width: 100%;
     width: 500px;
+    font-size: 1.5em;
 }
 
-.event p {
-    font-size: 1.5em;
+.participant:hover {
+    background: white;
+}
+
+.participant p {
     margin: 0;
     margin-top: .5em;
     /* font-family: "Work Sans"; */
-}
-
-.event h3 {
-    font-size: 1.5em;
 }
 
 .filters {
@@ -339,7 +357,6 @@ article input[type="email"] {
     background-color: black;
     border: 3px solid black;
     font-size: 16px;
-    animation: fadein 2s;
 }
 
 .marker-icon span {

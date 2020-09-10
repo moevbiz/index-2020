@@ -1,4 +1,5 @@
 require('dotenv').config()
+const slugify = require('slugify')
 
 const express = require('express')
 const axios = require('axios')
@@ -21,6 +22,7 @@ const join = (spaces, events) => {
         if (space !== undefined) {
             entry = {
                 space: space.name,
+                spaceId: space.spaceId,
                 address: space.address,
                 district: space.district,
                 website: space.website,
@@ -39,6 +41,7 @@ const join = (spaces, events) => {
         else {
             entry = {
                 space: event.gsx$space.$t,
+                spaceId: slugify(event.gsx$space.$t, {lower: true, strict: true, locale: 'de'}),
                 address: event.gsx$address.$t,
                 district: event.gsx$district.$t,
                 website: event.gsx$website.$t,
