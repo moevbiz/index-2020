@@ -16,6 +16,7 @@
     <main>
         <div class="terrorize program-header"
         style="
+        display: none;
         position: fixed;
         left: 500px;
         top: 0;
@@ -72,8 +73,15 @@
     document.addEventListener('click', function(e) {
         console.log(e.target)
         if (e.target.classList.contains('filter')) {
-            console.log('filter');
             dateView(e.target.dataset.date)
+        }
+        if (e.target.classList.contains('event__title')) {
+            let accordion = document.querySelector(`[data-event-id="${e.target.parentElement.dataset.eventId}"]`).querySelector('.event__accord')
+            if (accordion.style.maxHeight) {
+                accordion.style.maxHeight = null;
+            } else {
+                accordion.style.maxHeight = accordion.scrollHeight + 'px'
+            }
         }
     })
 
@@ -91,6 +99,7 @@
     let events = [];
     let participatingSpaces = [];
     let jsonFeatures = [];
+    let markers = [];
 
     function getSpace(spaceId) {
         return participatingSpaces.find(element => element.spaceId == spaceId)
@@ -130,13 +139,16 @@
                     // color: '#ff0000'
                 };
             },
-            pointToLayer: function(feature, latlng) {
-                return new L.marker(latlng, {
+            pointToLayer: function(feature, latlng) { 
+                let marker = new L.marker(latlng, {
                     icon: L.divIcon({
-                        className: `marker-icon ${params.space && params.space == feature.properties.spaceId ? '' : 'hidden'}`,
-                        html: `<span>${feature.properties.space}</span>`
+                        className: `marker-icon dates-${feature.properties.dates}${params.space && params.space != feature.properties.spaceId ? 'hidden' : ''}`,
+                        html: `<span>${feature.properties.space}</span>`,
+                        test: 'test'
                     })
                 })
+                markers.push(marker)
+                return marker
             },
             onEachFeature: function (feature, layer) {
                 // layer.bindPopup(
@@ -164,18 +176,24 @@
     function makeDiv(participant) {
         let element = `
             <div class="participant 
-            ${params.space && params.space == participant.spaceId ? '' : 'hidden'}"
-            data-date="23"
+            ${params.space && params.space != participant.spaceId ? 'hidden' : ''}"
             data-space-id="${participant.spaceId}">
-                <h3><span class="terrorize program-header program-header-inline">${participant.space}</span></h3>
+                <h3><span class="terrorize program-header program-header-inline"
+                    onclick="spaceView('${participant.spaceId}')"
+                    >${participant.space}</span></h3>
                 <p>
                 ${participant.address},
                 ${formatDistrict(participant.district, 'plz')}
                 <br>
-                ${participant.website}
+                <a href="${participant.website}">${participant.website}</a>
                 </p>
                 ${Object.keys(participant.events).map(function (key) {
-                    return `<li>${participant.events[key].title}</li>`
+                    event = participant.events[key]
+                    return `<div class="event" data-date="${event.start}" data-event-id="${event.id}">
+                        <div class="event__date">October ${event.start}</div>
+                        <div class="event__title">${event.title}</div>
+                        <div class="event__accord" data-event-id="${event.id}">${createTextLinks(event.description.replace(/(?:\r\n|\r|\n)/g, '<br>'))}</div>
+                    </div>`
                 }).join("")}
             </div>
         `
@@ -245,6 +263,10 @@
 
 
     // views
+    function test() {
+        console.log('test')
+    }
+
     const spaceView = (spaceId) => {
         let divs = document.querySelectorAll('[data-space-id]')
         divs.forEach(div => {
@@ -260,16 +282,46 @@
     }
 
     const dateView = (date) => {
-        let divs = document.querySelectorAll('[data-date]')
+        let divs = document.querySelectorAll('.event[data-date]')
+
         divs.forEach(div => {
-            let dates = div.dataset.date.split('+')
+            let dates = div.dataset.date
+            dates = dates.split('+')
             if (dates.includes(date)) {
                 div.classList.remove('hidden')
             } else {
                 div.classList.add('hidden')
             }
         })
+
+        let parents = document.querySelectorAll('[data-space-id]')
+        parents.forEach(parent => {
+            let sel = (parent.querySelectorAll(`[data-date="${date}"`).length)
+            if (sel > 0) {
+                parent.classList.remove('hidden')
+            }
+            else { 
+                parent.classList.add('hidden')
+            }
+        })
+
+        markers.forEach(marker => {
+            let mDates = marker.feature.properties.dates.split('+')
+            if (mDates.includes(date)) {
+                marker._icon.classList.remove('hidden')
+            } else {
+                marker._icon.classList.add('hidden')
+            }
+        })
+
         document.body.dataset.view="date"
+    }
+
+    const programView = () => {
+        let divs = document.querySelectorAll('.hidden')
+        divs.forEach(div => {
+            div.classList.remove('hidden')
+        })
     }
 
 
@@ -291,10 +343,23 @@
 		}
 		return params;
     }
+
+    function createTextLinks(text) {
+
+        return (text || "").replace(
+        /([^\S]|^)(((https?\:\/\/)|(www\.))(\S+))/gi,
+        function(match, space, url){
+            var hyperlink = url;
+            if (!hyperlink.match('^https?:\/\/')) {
+            hyperlink = 'http://' + hyperlink;
+            }
+            return space + '<a href="' + hyperlink + '">' + url + '</a>';
+        }
+        );
+    };
     
     document.addEventListener('DOMContentLoaded', function() {
         if (params.space) {
-            console.log(params.space)
             spaceView(params.space)
         }
     })

@@ -14,7 +14,7 @@ const checkResult = res => res.ok ? res.json() : Promise.resolve({});
 
 const join = (spaces, events) => {
     let entries = [];
-    events.forEach(event =>  {
+    events.forEach((event, i) => {
         if (event.gsx$confirmed.$t !== "TRUE") return;
         
         let entry;
@@ -28,12 +28,14 @@ const join = (spaces, events) => {
                 website: space.website,
                 lat: space.lat,
                 lng: space.lng,
+                dates: event.gsx$startdate.$t,
                 events: [
                     {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
                         end: event.gsx$enddate.$t,
                         description: event.gsx$description.$t,
+                        id: i,
                     }
                 ]
             }
@@ -47,12 +49,14 @@ const join = (spaces, events) => {
                 website: event.gsx$website.$t,
                 lat: event.gsx$lat.$t,
                 lng: event.gsx$lat.$t,
+                dates: event.gsx$startdate.$t,
                 events: [
                     {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
                         end: event.gsx$enddate.$t,
                         description: event.gsx$description.$t,
+                        id: i,
                     }
                 ]
             }
@@ -60,7 +64,7 @@ const join = (spaces, events) => {
 
         if (existingEntry = entries.find(prev => prev.space === entry.space)) {
             existingEntry.events.push(entry.events[0])
-            // existingEntry.date = existingEntry.concat('+', entry.events[0].date)
+            existingEntry.dates = existingEntry.dates + '+' + entry.events[0].start
         }
         else entries.push(entry)
     })
