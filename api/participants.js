@@ -83,6 +83,8 @@ app.get('/api/participants', (req, res, next) => {
     Promise.all([getSpaces(), getEvents()])
     .then(([spacesData, eventsData]) => {
         let result = join(spacesData.data, eventsData.data.feed.entry)
+        res.setHeader('Content-Type', 'text/html')
+        res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
         res.json(result)
     })
     .catch(err => next(err));
