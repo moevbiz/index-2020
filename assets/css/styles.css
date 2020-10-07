@@ -267,8 +267,8 @@ article input[type="email"] {
 
 /** space */
 
-[data-view="space"] .program-header {
-    font-size: 6vw;
+[data-view="space"] .participant {
+    background: white;
 }
 
 [data-view="space"] .filter-row {
