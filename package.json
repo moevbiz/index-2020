@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/moevbiz/index-2020#readme",
   "dependencies": {
+    "anchorme": "^2.1.2",
     "axios": "^0.20.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

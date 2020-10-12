@@ -14,9 +14,10 @@
 <body data-namespace="program" data-view="program">
     <canvas id="canvas" style="z-index: -1000"></canvas>
     <main>
-        <div class="terrorize program-header"
+        <div
+        id="header" 
+        class="terrorize program-header"
         style="
-        display: none;
         position: fixed;
         left: 500px;
         top: 0;
@@ -32,24 +33,22 @@
         </div>
         <div class="filters">
             <div class="filter-row filter-row-dates">
-                <button class="reset-button filter date-filter" data-date="22">
+                <button class="reset-button filter date-filter date-filter-all hidden">
+                    all
+                </button>
+                <button class="reset-button filter date-filter date-filter-single" data-date="22">
                     22
-                </button>,
-                <button class="reset-button filter date-filter" data-date="23">
+                </button>
+                <button class="reset-button filter date-filter date-filter-single" data-date="23">
                     23
-                </button>,
-                <button class="reset-button filter date-filter" data-date="24">
+                </button>
+                <button class="reset-button filter date-filter date-filter-single" data-date="24">
                     24
                 </button>
             </div>
-            <div class="filter-row filter-row-districts" style="display: none">
-                <div class="active">
-                    All districts
-                </div>
-            </div>
         </div>
         <div class="participants">
-
+            <div id="loader" style="cursor: wait;">Loading</div>
         </div>
     </main>
     <div id="map">

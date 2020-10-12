@@ -1,5 +1,6 @@
 require('dotenv').config()
 const slugify = require('slugify')
+const anchorme = require("anchorme").default
 
 const express = require('express')
 const axios = require('axios')
@@ -34,7 +35,7 @@ const join = (spaces, events) => {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
                         end: event.gsx$enddate.$t,
-                        description: event.gsx$description.$t,
+                        description: anchorme(event.gsx$description.$t),
                         id: i,
                     }
                 ]
@@ -55,7 +56,7 @@ const join = (spaces, events) => {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
                         end: event.gsx$enddate.$t,
-                        description: event.gsx$description.$t,
+                        description: anchorme(event.gsx$description.$t),
                         id: i,
                     }
                 ]

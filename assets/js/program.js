@@ -2,18 +2,34 @@ $(document).ready(function () {
     toFormat(document.querySelectorAll('.terrorize'));
 });
 
+// $(window).scroll(function() {
+//     if ($('body').data('view') == "program") {
+//         if ($(this).scrollTop() > 100) {
+//             $('#header').fadeOut();
+//           } else {
+//             $('#header').fadeIn();
+//           }
+//     }
+//   });  
+
 document.addEventListener('click', function(e) {
     console.log(e.target)
-    if (e.target.classList.contains('filter')) {
+    if (e.target.classList.contains('date-filter-single')) {
         dateView(e.target.dataset.date)
     }
     if (e.target.classList.contains('event__title')) {
+        if (e.target.classList.contains('no-acc')) return;
         let accordion = document.querySelector(`[data-event-id="${e.target.parentElement.dataset.eventId}"]`).querySelector('.event__accord')
         if (accordion.style.maxHeight) {
+            e.target.classList.remove('acc-open')
             accordion.style.maxHeight = null;
         } else {
+            e.target.classList.add('acc-open')
             accordion.style.maxHeight = accordion.scrollHeight + 'px'
         }
+    }
+    if (e.target.classList.contains('date-filter-all')) {
+        programView()
     }
 })
 
@@ -38,7 +54,6 @@ function getSpace(spaceId) {
 }
 
 function init(data) {
-    let districts = [];
     // console.log(data)
 
     let elements = [];
@@ -56,11 +71,6 @@ function init(data) {
     })
     elements.forEach(element => {
         document.querySelector('.participants').insertAdjacentHTML('beforeend', element)
-    })
-
-    districts.sort((a,b)=>a-b)
-    districts.forEach(district => {
-        makeDistrictDiv(district)
     })
 
     geojsonLayer = L.geoJson(jsonFeatures, {
@@ -103,6 +113,8 @@ function init(data) {
         dateView(params.date)
     }
 
+    document.getElementById('loader').style.display="none";
+
 }
 
 function makeDiv(participant) {
@@ -125,22 +137,13 @@ function makeDiv(participant) {
                 event = participant.events[key]
                 return `<div class="event" data-date="${event.start}" data-event-id="${event.id}">
                     <div class="event__date">October ${event.start}</div>
-                    <div class="event__title">${event.title}</div>
+                    <div class="event__title ${event.description.length > 0 ? '' : 'no-acc'} ">${event.title}</div>
                     <div class="event__accord" data-event-id="${event.id}">${createTextLinks(event.description.replace(/(?:\r\n|\r|\n)/g, '<br>'))}</div>
                 </div>`
             }).join("")}
         </div>
     `
     return element
-}
-
-function makeDistrictDiv(district) {
-    let element = `
-        <div>
-            ${formatDistrict(district, 'ordinal')}
-        </div>
-    `
-    return document.querySelector('.filter-row-districts').insertAdjacentHTML('beforeend', element)
 }
 
 function formatDistrict(district, format) {
@@ -220,6 +223,16 @@ const spaceView = (spaceId) => {
 const dateView = (date) => {
     let divs = document.querySelectorAll('.event[data-date]')
 
+    let dateBtns = document.querySelectorAll(`.filter[data-date]`)
+
+    dateBtns.forEach(dateBtn => {
+        if (dateBtn.dataset.date == date) {
+            dateBtn.classList.add('selected-date')
+        } else {
+            dateBtn.classList.remove('selected-date')
+        }
+    })
+
     divs.forEach(div => {
         let dates = div.dataset.date
         dates = dates.split('+')
@@ -229,6 +242,8 @@ const dateView = (date) => {
             div.classList.add('hidden')
         }
     })
+
+    document.querySelector('.date-filter-all').classList.remove('hidden')
 
     let parents = document.querySelectorAll('[data-space-id]')
     parents.forEach(parent => {
@@ -260,6 +275,9 @@ const programView = () => {
     divs.forEach(div => {
         div.classList.remove('hidden')
     })
+    document.querySelector('.date-filter-all').classList.add('hidden')
+
+    document.body.dataset.view="program"
 }
 
 
@@ -282,19 +300,14 @@ function transformToAssocArray( prmstr ) {
     return params;
 }
 
-function createTextLinks(text) {
-
-    return (text || "").replace(
-    /([^\S]|^)(((https?\:\/\/)|(www\.))(\S+))/gi,
-    function(match, space, url){
-        var hyperlink = url;
-        if (!hyperlink.match('^https?:\/\/')) {
-        hyperlink = 'http://' + hyperlink;
-        }
-        return space + '<a href="' + hyperlink + '">' + url + '</a>';
-    }
-    );
-};
+function createTextLinks(string) {
+    let regex = /\{([^\}]*)\}/g;
+    let newString = string.replace(regex, (_,m) => {
+        const [title, link] = m.split(': ');
+        return `<a href="${link}">${title}</a>`;
+    });
+    return newString;
+}
 
 window.onpopstate = function (event) {
     if (event.state) {
