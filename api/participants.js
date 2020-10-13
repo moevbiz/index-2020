@@ -34,7 +34,7 @@ const join = (spaces, events) => {
                     {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
-                        end: event.gsx$enddate.$t,
+                        times: event.gsx$times.$t,
                         description: anchorme(event.gsx$description.$t),
                         id: i,
                     }
@@ -55,7 +55,7 @@ const join = (spaces, events) => {
                     {
                         title: event.gsx$title.$t,
                         start: event.gsx$startdate.$t,
-                        end: event.gsx$enddate.$t,
+                        times: event.gsx$times.$t,
                         description: anchorme(event.gsx$description.$t),
                         id: i,
                     }
