@@ -161,7 +161,7 @@ function makeDiv(participant) {
             ${Object.keys(participant.events).map(function (key) {
                 event = participant.events[key]
                 return `<div class="event" data-date="${event.start}" data-event-id="${event.id}">
-                    <div class="event__date">October ${event.start}</div>
+                    <div class="event__date">October ${event.start}</div><div class="event__time">${event.times}</div>
                     <div class="event__title ${event.description.length > 0 ? '' : 'no-acc'} ">${event.title}</div>
                     <div class="event__accord" data-event-id="${event.id}">${createTextLinks(event.description.replace(/(?:\r\n|\r|\n)/g, '<br>'))}</div>
                 </div>`
