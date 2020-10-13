@@ -18,12 +18,7 @@
         <div
         id="header" 
         class="terrorize program-header"
-        style="
-        position: fixed;
-        left: 500px;
-        top: 0;
-        pointer-events: none;
-        ">
+        >
             Independent
             <br>
             Space 
@@ -32,14 +27,22 @@
             <br>
             2020
         </div>
+        <div id="list-map-toggle">
+            <button onclick="out('map')" class="reset-button list-map-toggle-button toggle-list selected">
+                List
+            </button>,
+            <button onclick="out('list')" class="reset-button list-map-toggle-button toggle-map">
+                Map
+            </button>,
+        </div>
         <div class="filters">
             <div class="filter-row filter-row-dates">
                 <button class="reset-button filter date-filter date-filter-single" data-date="22">
                     22
-                </button>
+                </button>,
                 <button class="reset-button filter date-filter date-filter-single" data-date="23">
                     23
-                </button>
+                </button>,
                 <button class="reset-button filter date-filter date-filter-single" data-date="24">
                     24
                 </button>

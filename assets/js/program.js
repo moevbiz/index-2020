@@ -124,6 +124,7 @@ function init(data) {
     participants.forEach(participant => {
         participant.addEventListener('click', (e) => {
             if (e.target.tagName == "A") return;
+            if (window.innerWidth < 900 && e.target.classList.contains('event__title')) return;
             spaceView(participant.dataset.spaceId)
         })
         participant.onmouseenter = function(e) {
@@ -257,14 +258,23 @@ const spaceView = (spaceId) => {
     if (window.innerWidth < 900) {
         let selectedDiv = document.querySelector('.selected-div')
         let h = window.innerHeight - selectedDiv.clientHeight
-        activeArea.style.top = selectedDiv.clientHeight + 'px'
-        activeArea.style.height = h + 'px'
+
+        if (useActiveArea == true) {
+            activeArea.style.top = selectedDiv.clientHeight + 'px'
+            activeArea.style.height = h + 'px'
+        }
+        else {
+            activeArea.style.top = 0;
+            activeArea.style.height = 100 + '%';
+        }
     }
 
     if (participatingSpaces.length > 0) {
         let spaceCoords = [getSpace(spaceId).lat, getSpace(spaceId).lng]
         map.flyTo(spaceCoords, 15)
     }
+
+    out('map')
 
     window.history.replaceState(null, null, `?space=${spaceId}`);
 
@@ -328,7 +338,34 @@ const programView = () => {
     })
     document.querySelector('.date-filter-all').classList.add('hidden')
 
+    window.history.pushState(null, null, window.location.href.split('?')[0]);
+
     document.body.dataset.view="program"
+}
+
+let useActiveArea = true
+
+const out = (which) => {
+    let list = document.querySelector('.participants')
+    let mapBtn = document.querySelector('.toggle-map')
+    let listBtn = document.querySelector('.toggle-list')
+    let activeArea = document.querySelector('.activeArea')
+
+    if (which == 'list') {
+        list.classList.add('out')
+        mapBtn.classList.add('selected')
+        listBtn.classList.remove('selected')
+        // useActiveArea = false
+    } 
+    if (which == 'map') {
+        list.classList.remove('out')
+        mapBtn.classList.remove('selected')
+        listBtn.classList.add('selected')
+        useActiveArea = true
+        if (document.body.dataset.view == 'space') {
+            programView()
+        }
+    }
 }
 
 
