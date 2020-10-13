@@ -672,7 +672,7 @@ article input[type="email"] {
         background: white;
     }
 
-    .participant:last-child {
+    [data-view="program"] .participant:last-child {
         padding-bottom: 100px;
     }
 
