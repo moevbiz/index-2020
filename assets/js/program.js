@@ -1,6 +1,11 @@
 $(document).ready(function () {
     toFormat(document.querySelectorAll('.terrorize'));
+    $(this).scrollTop(0);
 });
+
+window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+}
 
 // $(window).scroll(function() {
 //     if ($('body').data('view') == "program") {
@@ -54,7 +59,6 @@ function getSpace(spaceId) {
 }
 
 function init(data) {
-    // console.log(data)
 
     let elements = [];
     data.forEach(participant => {
@@ -101,10 +105,12 @@ function init(data) {
 
     map.addLayer(geojsonLayer);
 
-    geojsonLayer.on("click", function (event) {
+    geojsonLayer.on("click", function (event) { // marker click event
         var clickedMarker = event.layer;
-        console.log(clickedMarker)
+        spaceView(clickedMarker.feature.properties.spaceId)
     });
+
+    document.getElementById('loader').style.display="none";
 
     if (params.space) {
         spaceView(params.space)
@@ -113,19 +119,37 @@ function init(data) {
         dateView(params.date)
     }
 
-    document.getElementById('loader').style.display="none";
+    let participants = document.querySelectorAll('.participant')
+
+    participants.forEach(participant => {
+        participant.addEventListener('click', (e) => {
+            if (e.target.tagName == "A") return;
+            spaceView(participant.dataset.spaceId)
+        })
+        participant.onmouseenter = function(e) {
+            let m = markers.find(marker => {
+                return marker.feature.properties.spaceId == participant.dataset.spaceId
+            })
+            m._icon.classList.add('marker-hover')
+        }
+        participant.onmouseleave = function(e) {
+            let m = markers.find(marker => {
+                return marker.feature.properties.spaceId == participant.dataset.spaceId
+            })
+            m._icon.classList.remove('marker-hover')
+        }
+    })
 
 }
 
 function makeDiv(participant) {
     let element = `
         <div class="participant 
-        ${params.space && params.space != participant.spaceId ? 'hidden' : ''}
         ${params.date && !participant.dates.split('+').includes(params.date) ? 'hidden' : ''}"
         data-space-id="${participant.spaceId}"
-        data-dates="${participant.dates}">
+        data-dates="${participant.dates}"
+        >
             <h3><span class="terrorize program-header program-header-inline"
-                onclick="spaceView('${participant.spaceId}')"
                 >${participant.space}</span></h3>
             <p>
             ${participant.address},
@@ -203,12 +227,39 @@ function test() {
 const spaceView = (spaceId) => {
     let divs = document.querySelectorAll('[data-space-id]')
     divs.forEach(div => {
+        // if (div.dataset.spaceId == spaceId) {
+        //     div.classList.remove('hidden')
+        // } else {
+        //     div.classList.add('hidden')
+        // }
         if (div.dataset.spaceId == spaceId) {
-            div.classList.remove('hidden')
-        } else {
-            div.classList.add('hidden')
+            const offsetTop = div.offsetTop;
+            scroll({
+                top: offsetTop,
+                behavior: "smooth"
+            });
+            div.classList.add('selected-div')
+        }
+        else {
+            div.classList.remove('selected-div')
         }
     })
+
+    markers.forEach(marker => {
+        if (marker.feature.properties.spaceId == spaceId) {
+            marker._icon.classList.add('selected-marker')
+        } else {
+            marker._icon.classList.remove('selected-marker')
+        }
+    })
+
+    let activeArea = document.querySelector('.activeArea')
+    if (window.innerWidth < 900) {
+        let selectedDiv = document.querySelector('.selected-div')
+        let h = window.innerHeight - selectedDiv.clientHeight
+        activeArea.style.top = selectedDiv.clientHeight + 'px'
+        activeArea.style.height = h + 'px'
+    }
 
     if (participatingSpaces.length > 0) {
         let spaceCoords = [getSpace(spaceId).lat, getSpace(spaceId).lng]
