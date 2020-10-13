@@ -372,16 +372,11 @@ article input[type="email"] {
 
 .participant:hover {
     background: white;
-    /* border-top: 3px solid; */
-    /* border-bottom: 3px solid; */
-    /* margin-top: -3px; */
-    /* margin-bottom: -3px; */
 }
 
 .participant p {
     margin: 0;
     margin-top: .5em;
-    /* font-family: "Work Sans"; */
 }
 
 .show-map {
@@ -404,6 +399,12 @@ article input[type="email"] {
     padding: 0 0.3em;
     display: inline-block;
     margin-bottom: .2em;
+    margin-right: .5em;
+}
+
+.event__time {
+    font-family: "Work Sans";
+    display: inline-block;
 }
 
 .event__title {
