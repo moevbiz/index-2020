@@ -226,6 +226,7 @@ function test() {
 }
 
 const spaceView = (spaceId) => {
+    out('map')
     let divs = document.querySelectorAll('[data-space-id]')
     divs.forEach(div => {
         // if (div.dataset.spaceId == spaceId) {
@@ -273,8 +274,6 @@ const spaceView = (spaceId) => {
         let spaceCoords = [getSpace(spaceId).lat, getSpace(spaceId).lng]
         map.flyTo(spaceCoords, 15)
     }
-
-    out('map')
 
     window.history.replaceState(null, null, `?space=${spaceId}`);
 
@@ -351,6 +350,10 @@ const out = (which) => {
     let listBtn = document.querySelector('.toggle-list')
     let activeArea = document.querySelector('.activeArea')
 
+    if (document.body.dataset.view == 'space') {
+        programView()
+    }
+
     if (which == 'list') {
         list.classList.add('out')
         mapBtn.classList.add('selected')
@@ -362,9 +365,6 @@ const out = (which) => {
         mapBtn.classList.remove('selected')
         listBtn.classList.add('selected')
         useActiveArea = true
-        if (document.body.dataset.view == 'space') {
-            programView()
-        }
     }
 }
 

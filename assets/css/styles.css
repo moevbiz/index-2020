@@ -356,7 +356,7 @@ article input[type="email"] {
 
 .participants {
     min-height: 100%;
-    transition: left .1s linear;
+    transition: all .1s linear;
     left: 0;
 }
 
@@ -702,6 +702,7 @@ article input[type="email"] {
     .participants.out {
         position: absolute;
         left: -500px;
+        opacity: 0;
     }
 
 }
