@@ -16,6 +16,31 @@
     <meta property="og:image" content="assets/images/og.png" />
 </head>
 <body data-namespace="program" data-view="program">
+
+
+    <div id="cancelled"
+    style="
+    position: fixed;
+        top: 0;
+        left: 0;
+        background: white;
+        font-size: 3em;
+        font-family: 'Work Sans';
+        z-index: 10000;
+    ;"
+    >
+        Due to latest COVID-19 restrictions on events in Vienna, Independent Space Index 2020 has been cancelled.
+        <br>
+        <button class="reset-button"
+        style="border: 3px solid;
+        "
+        onclick="document.getElementById('cancelled').style.display='none'"
+        >
+            OK
+        </button>
+    </div>
+
+
     <canvas id="canvas" style="z-index: -1000"></canvas>
     <main>
         <div
